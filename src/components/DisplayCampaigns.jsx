@@ -2,19 +2,27 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from "uuid";
 import FundCard from './FundCard';
-import { loader } from '../assets';
+import { loader, logout } from '../assets';
+import { useDispatch } from 'react-redux';
+import { logoutSuccess } from '../service/UserSlice';
+// import { logout } from '../service/UserSlice';
 
 const DisplayCampaigns = ({ title, isLoading, campaigns }) => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const handleNavigate = (campaign) => {
     navigate(`/campaign-details/${campaign.title}`, { state: campaign })
+  }
+
+  const handleLogout = () => {
+    dispatch(logoutSuccess());
+    navigate('/login');
   }
   
   return (
     <div>
       <h1 className="font-epilogue font-semibold text-[18px] text-white text-left">{title} ({campaigns.length})</h1>
-
+       <button onClick={handleLogout}>Logout</button>
       <div className="flex flex-wrap mt-[20px] gap-[26px]">
         {isLoading && (
           <img src={loader} alt="loader" className="w-[100px] h-[100px] object-contain" />
