@@ -1,15 +1,58 @@
 import React, { useState } from 'react';
 import { crowdImage } from '../assets';
+import { toast } from 'react-toastify';
+import { BASE_URL } from '../config/BaseUrl';
 const AboutPage = () => {
   const [feedback, setFeedback] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   setFeedback('');
+  //   setSubmitted(true); // Simulate feedback submission
+  //   setTimeout(() => setSubmitted(false), 3000); // Reset after 3 seconds
+  // };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setFeedback('');
-    setSubmitted(true); // Simulate feedback submission
-    setTimeout(() => setSubmitted(false), 3000); // Reset after 3 seconds
-  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setSubmitted(true);
+    try {
+        const response = await fetch(`${BASE_URL}/company/auth/feedback`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+
+            },
+            body: JSON.stringify({feedback:feedback}),
+        });
+
+        const res = await response.json();
+
+        if (res.code === 200) {
+            toast.success('Feedback sent successfully');
+            console.log(res);
+            // dispatch(loginSuccess(res.data.company));
+            // navigate('/')
+        }
+        else if (res.code === 400) {
+           
+            toast.error(res.message);
+            // toast.error(res.message + "Hello");
+        }
+        else if (res.code === 401) {
+            toast.error(res.message, "hello");
+        }
+
+        // console.log('LoggedIn successful:', data);
+
+    } catch (error) {
+        console.error('LoggedIn error:', error);
+
+    } finally {
+      setSubmitted(false);
+      setFeedback('');
+    }
+};
 
   return (
     <div className="container mx-auto py-16 px-4 md:px-8 lg:px-20">

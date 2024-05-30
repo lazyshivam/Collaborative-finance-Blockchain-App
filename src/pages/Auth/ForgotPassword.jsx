@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { BASE_URL } from '../../config/BaseUrl';
+import {toast} from 'react-toastify'
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault(); 
+        setIsLoading(true);
         try {
-            const response = await fetch(`${BASE_URL}/v1/auth/forgot-password`, {
+            const response = await fetch(`${BASE_URL}/company/auth/forgot-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -15,17 +18,22 @@ const ForgotPassword = () => {
                 body: JSON.stringify({email: email}),
             });
 
-            if (!response.ok) {
-                throw new Error(`Password reset failed with status: ${response.status}`);
+            const res = await response.json();
+            if (res.code == 200) {
+                toast.success("Password reset link has been sent to your registered email.")
             }
-
-            alert("Password reset link has been sent to your registered email.");
+            else {
+                toast.error(res.message);
+            }
+            // alert();
          
         } catch (error) {
             console.error('Reset password error:', error);
+        } finally {
+            setEmail(''); // Clear email input after submission (optional)
+            setIsLoading(false);
         }
 
-        setEmail(''); // Clear email input after submission (optional)
     };
 
     return (
@@ -47,7 +55,7 @@ const ForgotPassword = () => {
                             />
                         </div>
                         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Reset Password
+                            {isLoading?'Please wait...':'Reset Password'}
                         </button>
                     </form>
                 </div>

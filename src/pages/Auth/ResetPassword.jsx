@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import queryString from 'query-string';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../config/BaseUrl';
+import { toast } from 'react-toastify';
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('');
@@ -22,11 +23,11 @@ const ResetPassword = () => {
         event.preventDefault();
         try {
             if (password !== newPassword) {
-                alert("Passwords do not match");
+                toast.error("Passwords do not match");
                 throw new Error('Passwords do not match');
             }
 
-            const response = await fetch(`${BASE_URL}/v1/auth/reset-password?token=${token}`, {
+            const response = await fetch(`${BASE_URL}/company/auth/reset-password?token=${token}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -34,12 +35,14 @@ const ResetPassword = () => {
                 body: JSON.stringify({ password: password }),
             });
 
-            if (!response.ok) {
-                throw new Error(`Password reset failed with status: ${response.status}`);
+            const res = await response.json();
+            if (res.code === 200) {
+                toast.success(res.message);
+                navigate('/login');
             }
-
-            alert("Password successfully reset");
-            navigate('/');
+            else {
+                toast.error(res.message);
+           }
 
         } catch (error) {
             console.error('Reset password error:', error);
@@ -59,7 +62,7 @@ const ResetPassword = () => {
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">New Password</label>
                             <input
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="password"
+                                type="text"
                                 id="password"
                                 name="password"
                                 value={password}
@@ -72,7 +75,7 @@ const ResetPassword = () => {
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="npassword">Confirm Password</label>
                             <input
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="password"
+                                type="text"
                                 id="npassword"
                                 name="newPassword"
                                 value={newPassword}

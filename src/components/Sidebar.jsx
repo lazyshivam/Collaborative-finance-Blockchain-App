@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { logo, sun } from '../assets';
@@ -17,14 +17,29 @@ const Icon = ({ styles, name, imgUrl, isActive, disabled, handleClick }) => (
 const Sidebar = () => {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState('dashboard');
+  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    console.log('toggleTheme')
+    setIsDarkMode(!isDarkMode);
+  };
   return (
-    <div className="flex justify-between items-center flex-col sticky top-5 h-[93vh]">
+    <div className="flex justify-between  items-center flex-col sticky top-5 h-[93vh]">
       <Link to="/">
         <Icon styles="w-[52px] h-[52px] bg-[#2c2f32]" imgUrl={logo} />
       </Link>
 
-      <div className="flex-1 flex flex-col justify-between items-center bg-[#ffffff] shadow-lg rounded-[20px] w-[76px] py-4 mt-12">
+      <div className="flex-1 flex flex-col dark:bg-[#1c1c24] justify-between items-center bg-[#ffffff] shadow-lg rounded-[20px] w-[76px] py-4 mt-12">
         <div className="flex flex-col justify-center items-center gap-3">
           {navlinks.map((link) => (
             <Icon 
@@ -41,7 +56,9 @@ const Sidebar = () => {
           ))}
         </div>
 
-        <Icon styles="bg-[#1c1c24] shadow-secondary" imgUrl={sun} />
+        <Icon
+          handleClick={toggleTheme} 
+          styles="bg-[#1c1c24] shadow-secondary" imgUrl={sun} />
       </div>
     </div>
   )

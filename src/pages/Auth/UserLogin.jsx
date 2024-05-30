@@ -32,17 +32,20 @@ const UserLogin = () => {
             });
 
             const res = await response.json();
-            
+
             if (res.code === 200) {
                 toast.success('User logged in successfully');
-                dispatch(loginSuccess(res.data));
+                console.log(res);
+                dispatch(loginSuccess(res.data.company));
                 navigate('/')
             }
             else if (res.code === 400) {
+               
                 toast.error(res.message);
+                // toast.error(res.message + "Hello");
             }
             else if (res.code === 401) {
-                toast.error(res.message);
+                toast.error(res.message, "hello");
             }
 
             // console.log('LoggedIn successful:', data);
