@@ -11,12 +11,38 @@ export default defineConfig({
   build: {
     rollupOptions: {
       external: [
-        '@safe-globalThis/safe-ethers-adapters'
+        '@safe-globalThis/safe-core-sdk', // Existing external module
+        '@safe-globalThis/safe-ethers-adapters', // Existing external module
+        '@safe-globalThis/safe-ethers-lib' // Add this module
         // Add other external modules if needed
       ]
     }
   },
-  
-
 });
+
+
+
+
+
+// import react from "@vitejs/plugin-react";
+// import { defineConfig } from "vite";
+
+// // https://vitejs.dev/config/
+// export default defineConfig({
+//   plugins: [react()],
+//   define: {
+//     global: "globalThis",
+//     "process.env": {},
+//   },
+//   build: {
+//     rollupOptions: {
+//       external: [
+//         '@safe-globalThis/safe-ethers-adapters'
+//         // Add other external modules if needed
+//       ]
+//     }
+//   },
+
+
+// });
 
